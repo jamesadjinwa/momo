@@ -1,6 +1,6 @@
 momoextract <- function(directory=character, csvf=character) {
         
-        setwd(directory)
+        setwd(directory)        # Default directory = ~/Documents/TRADEX/MyProjects/MOMO
         l <- 0                                          # Line at which we are writing
         total <- 0
         depot <- c()
@@ -19,11 +19,13 @@ momoextract <- function(directory=character, csvf=character) {
         
         # READ CSV FILE
         CodeStation <- read.csv("ListeDesSS.csv", sep=",", stringsAsFactors = FALSE, header = TRUE)
-        Dataset <- read.csv(csvf, sep = ",", skip = 4, nrows = 22598, stringsAsFactors = FALSE)
+        Dataset <- read.csv(csvf, sep = ",", skip = 4, stringsAsFactors = FALSE, na.strings = "NA")
         
         Dataset$Date.Time2 <- as.Date( as.character(Dataset$Date.Time), "%d-%m-%Y")
-        Retailers <- as.list(unique(as.character(subset(Dataset, Dataset$Retailer != "TRADEX")[ ,9])))
+        Retailers <- as.list(unique(as.character(subset(Dataset, Dataset$Retailer != "TRADEX" & Dataset$Retailer != "")[ ,9])))
         Dates <- as.list(unique(as.Date( as.character(Dataset$Date.Time), "%d-%m-%Y")))
+        Dates <- Dates[!is.na(Dates)]
+        
         StartDate <- strftime(Dates[[1]], "%d-%m-%Y")
         EndDate <- strftime(Dates[[length(Dates)]], "%d-%m-%Y")
         Services <- list("DEPOT", "PAIEMENT", "RETRAIT")
