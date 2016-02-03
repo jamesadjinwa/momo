@@ -17,7 +17,7 @@ momoextract <- function(directory=character, csvf=character) {
                                  codeClient=integer(),
                                  stringsAsFactors = FALSE)
         
-        # READ CSV FILE
+        # READ CSV FILES
         CodeStation <- read.csv("ListeDesSS.csv", sep=",", stringsAsFactors = FALSE, header = TRUE)
         Dataset <- read.csv(csvf, sep = ",", skip = 4, stringsAsFactors = FALSE, na.strings = "NA")
         
@@ -26,8 +26,10 @@ momoextract <- function(directory=character, csvf=character) {
         Dates <- as.list(unique(as.Date( as.character(Dataset$Date.Time), "%d-%m-%Y")))
         Dates <- Dates[!is.na(Dates)]
         
+        # This dates will be used for file name
         StartDate <- strftime(Dates[[1]], "%d-%m-%Y")
         EndDate <- strftime(Dates[[length(Dates)]], "%d-%m-%Y")
+        
         Services <- list("DEPOT", "PAIEMENT", "RETRAIT")
         
         for(d in 1:length(Dates)) {
