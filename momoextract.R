@@ -19,10 +19,10 @@ momoextract <- function(directory=character, csvf=character) {
         
         # READ CSV FILES
         CodeStation <- read.csv("ListeDesSS.csv", sep=",", stringsAsFactors = FALSE, header = TRUE)
-        Dataset <- read.csv(csvf, sep = ",", skip = 4, stringsAsFactors = FALSE, na.strings = "NA")
+        Dataset <- read.csv(csvf, sep = ",", header = TRUE, row.names = NULL, stringsAsFactors = FALSE, na.strings = "NA")
         
         Dataset$Date.Time2 <- as.Date( as.character(Dataset$Date.Time), "%d-%m-%Y")
-        Retailers <- as.list(unique(as.character(subset(Dataset, Dataset$Retailer != "TRADEX" & Dataset$Retailer != "")[ ,9])))
+        Retailers <- as.list(unique(as.character(subset(Dataset, Dataset$Retailer != "TRADEX" & Dataset$Retailer != "")[ ,8])))
         Dates <- as.list(unique(as.Date( as.character(Dataset$Date.Time), "%d-%m-%Y")))
         Dates <- Dates[!is.na(Dates)]
         
@@ -38,7 +38,7 @@ momoextract <- function(directory=character, csvf=character) {
                         MomoReport[l, 4] <- strftime(Dates[[d]], "%d/%m/%Y")
                         MomoReport[l, 5] <- Retailers[[r]]
                         for(s in 1:length(Services)) {
-                                total <- sum(as.integer( sub(",", "", subset(Dataset, Dataset$Service == Services[[s]] & Dataset$Retailer == Retailers[[r]] & Dataset$Date.Time2 %in% Dates[[d]])[ ,7] )))
+                                total <- sum(as.integer( sub(",", "", subset(Dataset, Dataset$Service == Services[[s]] & Dataset$Retailer == Retailers[[r]] & Dataset$Date.Time2 %in% Dates[[d]])[ ,6] )))
                                 if(total > 0) {
                                         if(Services[[s]] == 'DEPOT') MomoReport[l, 1] <- total
                                         if(Services[[s]] == 'PAIEMENT') MomoReport[l, 2] <- total
@@ -63,3 +63,4 @@ momoextract <- function(directory=character, csvf=character) {
         write.csv(MomoReport, file = ExportFilename, row.names = FALSE, na = "0")
         #head(MomoReport, 200)
 }
+momoextract("~/Documents/TRADEX/MyProjects/MOMO", "retailerPaymentDetails.csv")
